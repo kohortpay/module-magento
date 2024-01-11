@@ -26,10 +26,13 @@
                     <label>Payment from Specific Countries</label>
                     <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
                     <can_be_empty>1</can_be_empty>
+                    <depends>
+                        <field id="allowspecific">1</field>
+                    </depends>
                 </field>
                 <field id="merchant_key" translate="label" type="obscure" sortOrder="70" showInDefault="1" showInWebsite="1" canRestore="1">
                     <label>Merchant API Key</label>
-                    <comment>Get your API key from your KohortPay dashboard</comment>
+                    <comment>Get your API secret key from your KohortPay dashboard</comment>
                 </field>
                 <field id="minimum_order_total" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" canRestore="1">
                     <label>Minimum Order Total</label>
