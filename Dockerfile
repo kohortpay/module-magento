@@ -1,4 +1,4 @@
-FROM docker.io/bitnami/magento:2
+FROM --platform=linux/amd64 docker.io/bitnami/magento:2
 
 # Copy Magento init script
 RUN mkdir -p /docker-entrypoint-init.d
