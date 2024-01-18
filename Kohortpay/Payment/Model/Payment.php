@@ -18,6 +18,8 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
 
   protected $_isOffline = false;
 
+  protected $_minAmount = 50;
+
   /**
    * Authorizes specified amount.
    *
@@ -33,5 +35,14 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
     $amount
   ) {
     return $this;
+  }
+
+  /** Redirect to a payment gateway after place order */
+  public function getOrderPlaceRedirectUrl()
+  {
+    // Get current quote
+    //$quote = $this->_checkoutSession->getQuote();
+
+    return 'https://kohortpay.com/pay';
   }
 }
