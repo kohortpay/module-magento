@@ -36,7 +36,7 @@ services:
       - PORT=8080
     volumes:
       - "magento_data:/bitnami/magento"
-      #- "./Kohortpay:/bitnami/magento/app/code/Kohortpay"
+      - "./Kohortpay:/bitnami/magento/app/code/Kohortpay"
     depends_on:
       - mariadb
       - elasticsearch

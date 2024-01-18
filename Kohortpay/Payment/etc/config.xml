@@ -4,7 +4,7 @@
     <default>
         <payment>
             <kohortpay>
-                <model>KohortpayFacade</model>
+                <model>Kohortpay\Payment\Model\Payment</model>
                 <title>KohortPay</title>
                 <description>Pay, share and save up to 20%</description>
                 <active>1</active>

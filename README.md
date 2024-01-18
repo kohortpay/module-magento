@@ -2,9 +2,7 @@
 
 Official KohortPay Adobe Commerce (Magento) module
 
-TODO : 
-- Backoffice Settings
-- Display in frontend
+TODO :
 - Send right information and redirection
 - Flow and webhook
 - Composer

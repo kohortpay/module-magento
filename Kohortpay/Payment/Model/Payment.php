@@ -5,7 +5,7 @@ namespace Kohortpay\Payment\Model;
 /**
  * Pay In Store payment method model
  */
-class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
+class Payment extends \Magento\Payment\Model\Method\AbstractMethod
 {
   /**
    * Payment code
@@ -13,6 +13,10 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
    * @var string
    */
   protected $_code = 'kohortpay';
+
+  protected $_isGateway = true;
+
+  protected $_isOffline = false;
 
   /**
    * Authorizes specified amount.
