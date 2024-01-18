@@ -21,7 +21,6 @@ services:
       - "80:8080"
       - "443:8443"
     environment:
-      - PORT=8080
       - MAGENTO_HOST=localhost
       - MAGENTO_DATABASE_HOST=mariadb
       - MAGENTO_DATABASE_PORT_NUMBER=3306
@@ -34,6 +33,7 @@ services:
       - MAGENTO_MODE=developer
       - MAGENTO_PUBLIC_KEY=c502493add0360f12563071d7180ea7f
       - MAGENTO_PRIVATE_KEY=78693a226934acd23e422d385b68fab2
+      - PORT=8080
     volumes:
       - "magento_data:/bitnami/magento"
       #- "./Kohortpay:/bitnami/magento/app/code/Kohortpay"
