@@ -23,6 +23,10 @@ mysql -h $MAGENTO_DATABASE_HOST -u $MAGENTO_DATABASE_USER -p$MAGENTO_DATABASE_PA
 echo "==> Update magento head script configuration to fix styles.css path"
 mysql -h $MAGENTO_DATABASE_HOST -u $MAGENTO_DATABASE_USER -p$MAGENTO_DATABASE_PASSWORD -e "use $MAGENTO_DATABASE_NAME; UPDATE core_config_data SET value = '<link rel=\"stylesheet\" type=\"text/css\" media=\"all\" href=\"pub/media/styles.css\" />' WHERE path = 'design/head/includes';"
 
+# Insert new magento configuration to change default display currency to EUR
+echo "==> Insert new magento configuration to change default display currency to EUR"
+mysql -h $MAGENTO_DATABASE_HOST -u $MAGENTO_DATABASE_USER -p$MAGENTO_DATABASE_PASSWORD -e "use $MAGENTO_DATABASE_NAME; INSERT INTO core_config_data (scope, scope_id, path, value) VALUES ('default', 0, 'currency/options/default', 'EUR');"
+
 # Enable Kohortpay_Payment module
 # echo "==> Enable Kohortpay_Payment module"
 #composer require customgento/module-admin-payment-m2

@@ -8,6 +8,9 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Sales\Model\Order;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\State;
+use Magento\Framework\UrlInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\Locale\Resolver;
 
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Client;
@@ -28,22 +31,45 @@ class Redirect extends Action
   private $state;
 
   /**
+   * @var UrlInterface
+   */
+  private $urlInterface;
+
+  /**
+   * @var StoreManagerInterface
+   */
+  private $_storeManager;
+
+  /**
+   * @var Resolver
+   */
+  private $localeResolver;
+
+  /**
    * @param Context $context
    * @param CreateHostedCheckout $hostedCheckout
    * @param Session $checkoutSession
    * @param ScopeConfigInterface $scopeConfig
    * @param State $state
+   * @param UrlInterface $urlInterface
+   * @param StoreManagerInterface $storeManager
    */
   public function __construct(
     Context $context,
     Session $checkoutSession,
     ScopeConfigInterface $scopeConfig,
-    State $state
+    State $state,
+    UrlInterface $urlInterface,
+    StoreManagerInterface $storeManager,
+    Resolver $localeResolver
   ) {
     parent::__construct($context);
     $this->checkoutSession = $checkoutSession;
     $this->scopeConfig = $scopeConfig;
     $this->state = $state;
+    $this->urlInterface = $urlInterface;
+    $this->_storeManager = $storeManager;
+    $this->localeResolver = $localeResolver;
   }
 
   /**
@@ -53,6 +79,9 @@ class Redirect extends Action
    */
   public function execute()
   {
+    var_dump($this->getCheckoutSessionJson());
+    die();
+
     $client = new Client();
 
     // Get Magento configuration payment/kohortpay/merchant_key
@@ -109,31 +138,17 @@ class Redirect extends Action
     $json['customerLastName'] = $order->getCustomerLastname();
     $json['customerEmail'] = $order->getCustomerEmail();
 
-    /*****
-    // Return URLs
-    $json['successUrl'] = $this->context->link->getModuleLink(
-      'kohortpay',
-      'confirmation',
-      [
-        'action' => 'success',
-        'cart_id' => Context::getContext()->cart->id,
-        'secure_key' => Context::getContext()->customer->secure_key,
-      ]
+    // Success & cancel URLs
+    $json['successUrl'] = $this->urlInterface->getUrl(
+      'checkout/onepage/success'
     );
-    // Cancel URL should integrate the Prestashop language code
-    $json['cancelUrl'] = $this->context->link->getPageLink('order');
+    $json['cancelUrl'] = $this->urlInterface->getUrl(
+      'checkout/onepage/failure'
+    );
 
     // Locale & currency
-    $languageCode = explode(
-      '-',
-      Context::getContext()->language->language_code
-    );
-    if (!isset($languageCode[1])) {
-      $languageCode[1] = $languageCode[0];
-    }
-    $json['locale'] = $languageCode[0] . '_' . strtoupper($languageCode[1]);
-    //$json['currency'] = Context::getContext()->currency->iso_code;
-    */
+    $json['locale'] = $this->localeResolver->getLocale();
+    $json['currency'] = $order->getOrderCurrencyCode();
 
     // Order information
     $json['amountTotal'] = $this->cleanPrice($order->getGrandTotal());
@@ -148,7 +163,12 @@ class Redirect extends Action
         'price' => $this->cleanPrice($product->getPrice()),
         'quantity' => $product->getQtyOrdered(),
         'type' => 'PRODUCT',
-        'image_url' => $product->getProduct()->getImage(),
+        'image_url' =>
+          $this->_storeManager
+            ->getStore()
+            ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) .
+          'catalog/product' .
+          $product->getProduct()->getImage(),
       ];
     }
     /***
@@ -172,7 +192,7 @@ class Redirect extends Action
 
     // Metadata
     $json['metadata'] = [
-      'cart_id' => $order->getQuoteId(),
+      'quote_id' => $order->getQuoteId(),
       'order_id' => $order->getIncrementId(),
       'customer_id' => $order->getCustomerId(),
     ];
