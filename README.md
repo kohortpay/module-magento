@@ -3,12 +3,8 @@
 Official KohortPay Adobe Commerce (Magento) module
 
 TODO :
-- Sucess route In progress + Invoice + comments (success)
-- Cancel route
-
-
+- Success route In progress + Invoice + comments (success)
 - Discounts
-
 - Minimum amount restriction 
 - Description 
 - Debug mode et message error
@@ -16,7 +12,6 @@ TODO :
 - Sort order
 - Not loose API key modif
 - Composer
-- Switch EUR et FR
 - Upload demo en ligne (smtp)
 - Readme : Installation guide & User guide
 

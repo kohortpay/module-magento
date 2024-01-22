@@ -47,7 +47,6 @@ class Redirect extends Action
 
   /**
    * @param Context $context
-   * @param CreateHostedCheckout $hostedCheckout
    * @param Session $checkoutSession
    * @param ScopeConfigInterface $scopeConfig
    * @param State $state
@@ -79,8 +78,8 @@ class Redirect extends Action
    */
   public function execute()
   {
-    var_dump($this->getCheckoutSessionJson());
-    die();
+    //var_dump($this->getCheckoutSessionJson());
+    //die();
 
     $client = new Client();
 
@@ -143,7 +142,7 @@ class Redirect extends Action
       'checkout/onepage/success'
     );
     $json['cancelUrl'] = $this->urlInterface->getUrl(
-      'checkout/onepage/failure'
+      'kohortpay/checkout/cancel'
     );
 
     // Locale & currency
