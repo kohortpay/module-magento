@@ -7,7 +7,7 @@ use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Sales\Api\OrderManagementInterface;
 
-class Cancel extends Action
+class Success extends Action
 {
   /** @var Session */
   private $checkoutSession;
@@ -41,10 +41,6 @@ class Cancel extends Action
   {
     $order = $this->checkoutSession->getLastRealOrder();
 
-    if ($order->canCancel()) {
-      $this->_order->cancel($order->getId());
-    }
-
-    $this->_redirect('checkout/onepage/failure');
+    $this->_redirect('checkout/onepage/success');
   }
 }

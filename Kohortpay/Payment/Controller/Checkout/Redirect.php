@@ -78,8 +78,8 @@ class Redirect extends Action
    */
   public function execute()
   {
-    //var_dump($this->getCheckoutSessionJson());
-    //die();
+    var_dump($this->getCheckoutSessionJson());
+    die();
 
     $client = new Client();
 
@@ -139,7 +139,7 @@ class Redirect extends Action
 
     // Success & cancel URLs
     $json['successUrl'] = $this->urlInterface->getUrl(
-      'checkout/onepage/success'
+      'kohortpay/checkout/success'
     );
     $json['cancelUrl'] = $this->urlInterface->getUrl(
       'kohortpay/checkout/cancel'
@@ -170,17 +170,15 @@ class Redirect extends Action
           $product->getProduct()->getImage(),
       ];
     }
-    /***
+
     // Discounts
-    foreach (Context::getContext()->cart->getCartRules() as $cartRule) {
-      $json['lineItems'][] = [
-        'name' => $this->cleanString($cartRule['name']),
-        'price' => $this->cleanPrice($cartRule['value_real']) * -1,
-        'quantity' => 1,
-        'type' => 'DISCOUNT',
-      ];
-    }
-     ******/
+    $json['lineItems'][] = [
+      'name' => $this->cleanString($order->getDiscountDescription()),
+      'price' => $this->cleanPrice($order->getDiscountAmount()),
+      'quantity' => 1,
+      'type' => 'DISCOUNT',
+    ];
+
     // Shipping
     $json['lineItems'][] = [
       'name' => $this->cleanString($order->getShippingDescription()),

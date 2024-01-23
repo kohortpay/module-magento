@@ -4,7 +4,6 @@ Official KohortPay Adobe Commerce (Magento) module
 
 TODO :
 - Success route In progress + Invoice + comments (success)
-- Discounts
 - Minimum amount restriction 
 - Description 
 - Debug mode et message error
