@@ -78,8 +78,8 @@ class Redirect extends Action
    */
   public function execute()
   {
-    var_dump($this->getCheckoutSessionJson());
-    die();
+    //var_dump($this->getCheckoutSessionJson());
+    //die();
 
     $client = new Client();
 
@@ -172,12 +172,14 @@ class Redirect extends Action
     }
 
     // Discounts
-    $json['lineItems'][] = [
-      'name' => $this->cleanString($order->getDiscountDescription()),
-      'price' => $this->cleanPrice($order->getDiscountAmount()),
-      'quantity' => 1,
-      'type' => 'DISCOUNT',
-    ];
+    if ($order->getDiscountAmount() > 0) {
+      $json['lineItems'][] = [
+        'name' => $this->cleanString($order->getDiscountDescription()),
+        'price' => $this->cleanPrice($order->getDiscountAmount()),
+        'quantity' => 1,
+        'type' => 'DISCOUNT',
+      ];
+    }
 
     // Shipping
     $json['lineItems'][] = [

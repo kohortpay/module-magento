@@ -6,6 +6,7 @@ use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Sales\Api\OrderManagementInterface;
+use Magento\Quote\Model\QuoteFactory;
 
 class Cancel extends Action
 {
@@ -18,6 +19,11 @@ class Cancel extends Action
   protected $_order;
 
   /**
+   * @var QuoteFactory
+   */
+  protected $quoteFactory;
+
+  /**
    * @param Context $context
    * @param Session $checkoutSession
    * @param OrderManagementInterface $orderManagementInterface
@@ -25,11 +31,13 @@ class Cancel extends Action
   public function __construct(
     Context $context,
     Session $checkoutSession,
+    QuoteFactory $quoteFactory,
     OrderManagementInterface $orderManagementInterface
   ) {
     parent::__construct($context);
     $this->checkoutSession = $checkoutSession;
     $this->_order = $orderManagementInterface;
+    $this->quoteFactory = $quoteFactory;
   }
 
   /**
@@ -42,9 +50,24 @@ class Cancel extends Action
     $order = $this->checkoutSession->getLastRealOrder();
 
     if ($order->canCancel()) {
+      $order->addStatusHistoryComment(
+        __('KohortPay Payment has been canceled by the customer.')
+      );
+      $order->save();
       $this->_order->cancel($order->getId());
     }
 
-    $this->_redirect('checkout/onepage/failure');
+    // Restore quote
+    $id = $this->checkoutSession->getLastQuoteId();
+    $quote = $this->quoteFactory->create()->loadByIdWithoutStore($id);
+    if ($quote->getId()) {
+      $quote
+        ->setIsActive(true)
+        ->setReservedOrderId(null)
+        ->save();
+      $this->checkoutSession->replaceQuote($quote);
+    }
+
+    $this->_redirect('checkout');
   }
 }

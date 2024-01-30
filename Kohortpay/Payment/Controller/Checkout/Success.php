@@ -5,7 +5,9 @@ use Magento\Checkout\Model\Session;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
-use Magento\Sales\Api\OrderManagementInterface;
+use Magento\Sales\Model\Service\InvoiceService;
+use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
+use Magento\Framework\DB\Transaction;
 
 class Success extends Action
 {
@@ -13,23 +15,38 @@ class Success extends Action
   private $checkoutSession;
 
   /**
-   * @var OrderManagementInterface
+   * @var InvoiceService
    */
-  protected $_order;
+  protected $invoiceService;
+
+  /**
+   * @var InvoiceSender
+   */
+  protected $invoiceSender;
+
+  /**
+   * @var Transaction
+   */
+  protected $transaction;
 
   /**
    * @param Context $context
    * @param Session $checkoutSession
-   * @param OrderManagementInterface $orderManagementInterface
+   * @param InvoiceService $invoiceService
+   * @param InvoiceSender $invoiceSender
    */
   public function __construct(
     Context $context,
     Session $checkoutSession,
-    OrderManagementInterface $orderManagementInterface
+    InvoiceService $invoiceService,
+    InvoiceSender $invoiceSender,
+    Transaction $transaction
   ) {
     parent::__construct($context);
     $this->checkoutSession = $checkoutSession;
-    $this->_order = $orderManagementInterface;
+    $this->invoiceService = $invoiceService;
+    $this->invoiceSender = $invoiceSender;
+    $this->transaction = $transaction;
   }
 
   /**
@@ -40,6 +57,29 @@ class Success extends Action
   public function execute()
   {
     $order = $this->checkoutSession->getLastRealOrder();
+
+    // Generate invoice
+    if ($order->canInvoice()) {
+      $invoice = $this->invoiceService->prepareInvoice($order);
+      $invoice->register();
+      $invoice->save();
+
+      $transactionSave = $this->transaction
+        ->addObject($invoice)
+        ->addObject($invoice->getOrder());
+      $transactionSave->save();
+      $this->invoiceSender->send($invoice);
+
+      $order
+        ->addCommentToStatusHistory(
+          __(
+            'Notified customer about invoice #%1 creation after successful KohortPay Payment.',
+            $invoice->getId()
+          )
+        )
+        ->setIsCustomerNotified(true)
+        ->save();
+    }
 
     $this->_redirect('checkout/onepage/success');
   }
