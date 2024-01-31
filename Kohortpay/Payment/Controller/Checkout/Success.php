@@ -69,16 +69,6 @@ class Success extends Action
         ->addObject($invoice->getOrder());
       $transactionSave->save();
       $this->invoiceSender->send($invoice);
-
-      $order
-        ->addCommentToStatusHistory(
-          __(
-            'Notified customer about invoice #%1 creation after successful KohortPay Payment.',
-            $invoice->getId()
-          )
-        )
-        ->setIsCustomerNotified(true)
-        ->save();
     }
 
     $this->_redirect('checkout/onepage/success');

@@ -50,10 +50,6 @@ class Cancel extends Action
     $order = $this->checkoutSession->getLastRealOrder();
 
     if ($order->canCancel()) {
-      $order->addStatusHistoryComment(
-        __('KohortPay Payment has been canceled by the customer.')
-      );
-      $order->save();
       $this->_order->cancel($order->getId());
     }
 

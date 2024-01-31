@@ -4,7 +4,6 @@ Official KohortPay Adobe Commerce (Magento) module
 
 TODO :
 - Small image product
-- phone number 
 - Minimum amount restriction 
 - Description 
 - Debug mode et message error
