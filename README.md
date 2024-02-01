@@ -3,12 +3,13 @@
 Official KohortPay Adobe Commerce (Magento) module
 
 TODO :
-- Small image product
-- Minimum amount restriction 
-- Description 
+- Description product
+- Payment Description
+
+
 - Debug mode et message error
 - Country restriction
-- Sort order
+
 - Not loose API key modif
 - Composer
 - SMTP Demo

@@ -37,12 +37,21 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
     return $this;
   }
 
-  /** Redirect to a payment gateway after place order */
-  public function getOrderPlaceRedirectUrl()
-  {
-    // Get current quote
-    //$quote = $this->_checkoutSession->getQuote();
+  /** Make payment available if order amount is superior to 50$ */
+  public function isAvailable(
+    \Magento\Quote\Api\Data\CartInterface $quote = null
+  ) {
+    $minAmount = $this->getConfigData('minimum_order_total');
+    $total = $quote->getBaseGrandTotal();
 
-    return 'https://kohortpay.com/pay';
+    if ($minAmount !== null && $minAmount > $total) {
+      return false;
+    }
+
+    if (!$this->getConfigData('merchant_key')) {
+      return false;
+    }
+
+    return true;
   }
 }
