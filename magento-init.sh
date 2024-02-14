@@ -29,8 +29,8 @@ mysql -h $MAGENTO_DATABASE_HOST -u $MAGENTO_DATABASE_USER -p$MAGENTO_DATABASE_PA
 
 # Enable Kohortpay_Payment module
 echo "==> Enable Kohortpay_Payment module"
-mkdir -p /bitnami/magento/app/code/Kohortpay
-mv /tmp/Kohortpay /bitnami/magento/app/code/Kohortpay
+mkdir -p /bitnami/magento/app/code
+mv /tmp/Kohortpay /bitnami/magento/app/code
 bin/magento module:enable Kohortpay_Payment
 bin/magento setup:upgrade
 bin/magento setup:di:compile
