@@ -28,12 +28,12 @@ echo "==> Insert new magento configuration to change default display currency to
 mysql -h $MAGENTO_DATABASE_HOST -u $MAGENTO_DATABASE_USER -p$MAGENTO_DATABASE_PASSWORD -e "use $MAGENTO_DATABASE_NAME; INSERT INTO core_config_data (scope, scope_id, path, value) VALUES ('default', 0, 'currency/options/default', 'EUR');"
 
 # Enable Kohortpay_Payment module
-# echo "==> Enable Kohortpay_Payment module"
-#composer require customgento/module-admin-payment-m2
-#bin/magento module:enable Kohortpay_Payment
-#bin/magento setup:upgrade
-#bin/magento cache:flush
-#bin/magento setup:di:compile
+echo "==> Enable Kohortpay_Payment module"
+mkdir -p /bitnami/magento/app/code
+mv /tmp/Kohortpay /bitnami/magento/app/code
+bin/magento module:enable Kohortpay_Payment
+bin/magento setup:upgrade
+bin/magento setup:di:compile
 
 # Refresh cache
 echo "==> Refreshing cache"

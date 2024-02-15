@@ -10,9 +10,6 @@ define(
             defaults: {
                 template: 'Kohortpay_Payment/payment/kohortpay'
             },
-            getDescription: function () {
-                return 'Pay with Kohortpay';
-            },
             afterPlaceOrder: function () {
                 redirectOnSuccessAction.redirectUrl = url.build('kohortpay/checkout/redirect');
                 this.redirectAfterPlaceOrder = true;

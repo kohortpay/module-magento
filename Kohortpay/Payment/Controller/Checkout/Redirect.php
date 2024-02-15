@@ -136,7 +136,7 @@ class Redirect extends Action
     $json['customerFirstName'] = $order->getCustomerFirstname();
     $json['customerLastName'] = $order->getCustomerLastname();
     $json['customerEmail'] = $order->getCustomerEmail();
-    //$json['customerPhone'] = $order->getBillingAddress()->getTelephone();
+    $json['customerPhone'] = $order->getBillingAddress()->getTelephone();
 
     // Success & cancel URLs
     $json['successUrl'] = $this->urlInterface->getUrl(
