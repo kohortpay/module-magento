@@ -6,7 +6,6 @@
             <kohortpay>
                 <model>Kohortpay\Payment\Model\Payment</model>
                 <title>KohortPay</title>
-                <description>Pay, share and save up to 20%</description>
                 <active>1</active>
                 <allowspecific>0</allowspecific>
                 <order_status>pending</order_status>

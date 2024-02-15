@@ -3,14 +3,7 @@
 Official KohortPay Adobe Commerce (Magento) module
 
 TODO :
-- Description product
-- Payment Description
-
-
 - Debug mode et message error
-- Country restriction
-
-- Not loose API key modif
 - Composer
 - SMTP Demo
 - Readme : Installation guide & User guide
