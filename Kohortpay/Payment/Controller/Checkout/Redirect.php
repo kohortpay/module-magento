@@ -78,12 +78,8 @@ class Redirect extends Action
    */
   public function execute()
   {
-    //var_dump($this->getCheckoutSessionJson());
-    //die();
-
     $client = new Client();
 
-    // Get Magento configuration payment/kohortpay/merchant_key
     $merchantKey = $this->scopeConfig->getValue(
       'payment/kohortpay/merchant_key',
       \Magento\Store\Model\ScopeInterface::SCOPE_STORE
