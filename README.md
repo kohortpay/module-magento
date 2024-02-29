@@ -52,7 +52,7 @@ KohortPay lets your customers pay, refer and save on every purchase. Cut your cu
 ## Module overview
 
 ### Version
-Current version is 1.0.0. See all [releases here](https://github.com/kohortpay/module-magento/releases).
+Current version is 1.1.0. See all [releases here](https://github.com/kohortpay/module-magento/releases).
 
 ### Licence
 The module and this repository is under MIT License. 
@@ -60,7 +60,7 @@ The module and this repository is under MIT License.
 ### Compabilities and Restrictions
 - Only FR and EN languages available.
 - Only EUR currency available.
-- Works and has been tested with Prestashop 2.4 (should work from Magento 2.0 but not tested, use at your own risk).
+- Works and has been tested with Magento 2.4 (should work from Magento 2.0 but not tested, use at your own risk).
 
 ### Features
 - Add a new payment method that you customer will love (Pay less, together)
@@ -68,7 +68,7 @@ The module and this repository is under MIT License.
 - Enable/disable the module by a simple switch through the settings.
 - Possibility to set minimun amount, under which the payment is disabled. 
 - Easy way to switch live/test mode by filling you API secret key (sk or sk_test).
-- Handle API errors (with more details if Prestashop is in debug mode).
+- Handle API errors (with more details if Magento is in debug mode).
 
 ## Installation
 
@@ -100,7 +100,7 @@ Coming soon...
 
 ### Prerequisites
 - You should have a KohortPay account. If it's not the case, you can [register here](https://dashboard.kohortpay.com/sign-up).
-- You should have installed the module on your Prestashop instance and have access to its settings page.
+- You should have installed the module on your Magento instance and have access to its settings page.
 
 ### Activation
 

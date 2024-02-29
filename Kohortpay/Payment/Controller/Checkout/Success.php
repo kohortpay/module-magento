@@ -57,18 +57,34 @@ class Success extends Action
   public function execute()
   {
     $order = $this->checkoutSession->getLastRealOrder();
+    $paymentId = $this->getRequest()->getParam('payment_id');
 
     // Generate invoice
     if ($order->canInvoice()) {
+      $payment = $order->getPayment();
+      $payment->setParentTransactionId(null);
+
+      $payment->setTransactionId($paymentId)->setIsTransactionClosed(0);
+
       $invoice = $this->invoiceService->prepareInvoice($order);
+      $invoice->setRequestedCaptureCase(
+        \Magento\Sales\Model\Order\Invoice::CAPTURE_ONLINE
+      );
       $invoice->register();
       $invoice->save();
 
       $transactionSave = $this->transaction
         ->addObject($invoice)
         ->addObject($invoice->getOrder());
+
       $transactionSave->save();
       $this->invoiceSender->send($invoice);
+      $order
+        ->addStatusHistoryComment(
+          __('Notified customer about invoice #%1.', $invoice->getId())
+        )
+        ->setIsCustomerNotified(true)
+        ->save();
     }
 
     $this->_redirect('checkout/onepage/success');
