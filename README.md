@@ -52,7 +52,7 @@ KohortPay lets your customers pay, refer and save on every purchase. Cut your cu
 ## Module overview
 
 ### Version
-Current version is 1.0.0. See all [releases here](https://github.com/kohortpay/module-magento/releases).
+Current version is 1.1.0. See all [releases here](https://github.com/kohortpay/module-magento/releases).
 
 ### Licence
 The module and this repository is under MIT License. 
