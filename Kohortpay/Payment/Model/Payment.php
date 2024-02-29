@@ -6,7 +6,8 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 
 use Magento\Framework\Message\ManagerInterface;
-use Magento\Framework\App\Config\ScopeConfigInterface;
+
+use Magento\Payment\Model\InfoInterface;
 
 /**
  * Pay In Store payment method model
@@ -22,6 +23,9 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
   protected $_minAmount = 50;
 
   protected $_canRefund = true;
+  protected $_canRefundInvoicePartial = true;
+
+  protected $_canCapture = true;
 
   /**
    * @var ManagerInterface
@@ -29,22 +33,80 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
   protected $messageManager;
 
   /**
-   * @var ScopeConfigInterface
+   * @var \Magento\Framework\App\Config\ScopeConfigInterface
    */
   protected $scopeConfig;
 
   /**
+   * @var \Magento\Framework\Pricing\PriceCurrencyInterface
+   */
+  protected $priceCurrency;
+
+  /**
+   * @var \Magento\Store\Model\StoreManagerInterface
+   */
+  protected $storeManager;
+
+  /**
    * Payment constructor.
    *
+   * @param \Magento\Framework\Model\Context $context
+   * @param \Magento\Framework\Registry $registry
+   * @param \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory
+   * @param \Magento\Framework\Api\AttributeValueFactory $customAttributeFactory
+   * @param \Magento\Payment\Helper\Data $paymentData
+   * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+   * @param \Magento\Payment\Model\Method\Logger $logger
+   * @param \Magento\Framework\Module\ModuleListInterface $moduleList
+   * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate
+   * @param array $data
    * @param ManagerInterface $messageManager
-   * @param ScopeConfigInterface $scopeConfig
    */
   public function __construct(
+    \Magento\Framework\Model\Context $context,
+    \Magento\Framework\Registry $registry,
+    \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory,
+    \Magento\Framework\Api\AttributeValueFactory $customAttributeFactory,
+    \Magento\Payment\Helper\Data $paymentData,
+    \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+    \Magento\Payment\Model\Method\Logger $logger,
     ManagerInterface $messageManager,
-    ScopeConfigInterface $scopeConfig
+    \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
+    \Magento\Store\Model\StoreManagerInterface $storeManager,
+    array $data = []
   ) {
-    $this->messageManager = $messageManager;
+    parent::__construct(
+      $context,
+      $registry,
+      $extensionFactory,
+      $customAttributeFactory,
+      $paymentData,
+      $scopeConfig,
+      $logger,
+      null,
+      null,
+      $data
+    );
+
     $this->scopeConfig = $scopeConfig;
+    $this->messageManager = $messageManager;
+    $this->priceCurrency = $priceCurrency;
+    $this->storeManager = $storeManager;
+  }
+
+  /**
+   * Capture payment
+   *
+   * @param InfoInterface $payment
+   * @param float         $amount
+   *
+   * @return $this
+   *
+   * @throws LocalizedException
+   */
+  public function capture(InfoInterface $payment, $amount)
+  {
+    return $this;
   }
 
   /**
@@ -57,7 +119,7 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
    *
    * @throws LocalizedException
    */
-  public function refund(\Magento\Payment\Model\InfoInterface $payment, $amount)
+  public function refund(InfoInterface $payment, $amount)
   {
     $this->refundAction($payment, $amount);
 
@@ -90,6 +152,13 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
    */
   private function refundAction($payment, $amount)
   {
+    $orderCurrency = $payment->getOrder()->getOrderCurrencyCode();
+    if (
+      $orderCurrency !== $this->storeManager->getStore()->getBaseCurrencyCode()
+    ) {
+      $amount = $this->priceCurrency->convert($amount, null, $orderCurrency);
+    }
+
     $client = new Client();
 
     $merchantKey = $this->scopeConfig->getValue(
@@ -102,15 +171,14 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
         'headers' => [
           'Authorization' => 'Bearer ' . $merchantKey,
         ],
-        'json' => {
-          "amount": $amount * 100,
-          "payment_intent_id": "pi_9da8e9439f1437",
-          "customer_id": "cus_941695de245ea4"
-        },
+        'json' => [
+          'amount' => number_format($amount, 2, '.', '') * 100,
+          'payment_intent_id' => $payment->getParentTransactionId(),
+        ],
       ]);
 
       $this->messageManager->addSuccessMessage(
-        __('Payment refunded successfully.')
+        __('Payment refunded successfully with KohortPay.')
       );
     } catch (ClientException $e) {
       if ($e->hasResponse()) {
@@ -121,8 +189,11 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
             ->getContents(),
           true
         );
+
         if (isset($errorResponse['error']['message'])) {
-          var_dump($errorResponse['error']['message']);
+          throw new \Magento\Framework\Validator\Exception(
+            __($errorResponse['error']['message'])
+          );
         }
       }
       throw new \Magento\Framework\Validator\Exception(
