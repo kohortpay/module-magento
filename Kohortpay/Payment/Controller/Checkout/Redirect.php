@@ -86,7 +86,7 @@ class Redirect extends Action
     );
 
     try {
-      $response = $client->post('https://api.kohortpay.com/checkout-sessions', [
+      $response = $client->post('https://api.kohortpay.dev/checkout-sessions', [
         'headers' => [
           'Authorization' => 'Bearer ' . $merchantKey,
         ],
