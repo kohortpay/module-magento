@@ -167,7 +167,7 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
     );
 
     try {
-      $response = $client->post('https://api.kohortpay.dev/refunds', [
+      $response = $client->post('https://api.kohortpay.com/refunds', [
         'headers' => [
           'Authorization' => 'Bearer ' . $merchantKey,
         ],

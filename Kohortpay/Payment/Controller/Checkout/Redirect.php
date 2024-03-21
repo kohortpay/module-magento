@@ -86,7 +86,7 @@ class Redirect extends Action
     );
 
     try {
-      $response = $client->post('https://api.kohortpay.dev/checkout-sessions', [
+      $response = $client->post('https://api.kohortpay.com/checkout-sessions', [
         'headers' => [
           'Authorization' => 'Bearer ' . $merchantKey,
         ],
@@ -115,7 +115,7 @@ class Redirect extends Action
           true
         );
         if (isset($errorResponse['error']['message'])) {
-          var_dump($errorResponse['error']['message']);
+          var_dump($errorResponse['error']['message']); // TODO: Replace by error message notification
         }
       }
     }

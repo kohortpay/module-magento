@@ -35,7 +35,7 @@ services:
       - MAGENTO_PRIVATE_KEY=78693a226934acd23e422d385b68fab2
     volumes:
       - "magento_data:/bitnami/magento"
-      - "./Kohortpay:/bitnami/magento/app/code/Kohortpay"
+      #- "./Kohortpay:/bitnami/magento/app/code/Kohortpay"
     depends_on:
       - mariadb
       - elasticsearch
