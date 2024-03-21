@@ -115,7 +115,7 @@ class Redirect extends Action
           true
         );
         if (isset($errorResponse['error']['message'])) {
-          var_dump($errorResponse['error']['message']);
+          var_dump($errorResponse['error']['message']); // TODO: Replace by error message notification
         }
       }
     }
